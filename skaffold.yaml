@@ -1,0 +1,20 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/* # watch all files in our k8s folder
+build:
+  # local:
+  #   push: false # dont push docker build to dockerhub
+  googleCloudBuild: 
+    projectId: ticketing-dev-311001
+  artifacts:
+    - image: us.gcr.io/ticketing-dev-311001/auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
