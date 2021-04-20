@@ -5,12 +5,10 @@ deploy:
     manifests:
       - ./infra/k8s/* # watch all files in our k8s folder
 build:
-  # local:
-  #   push: false # dont push docker build to dockerhub
-  googleCloudBuild: 
-    projectId: ticketing-dev-311001
+  local:
+    push: false # dont push docker build to dockerhub
   artifacts:
-    - image: us.gcr.io/ticketing-dev-311001/auth
+    - image: kchen9999/auth
       context: auth
       docker:
         dockerfile: Dockerfile
