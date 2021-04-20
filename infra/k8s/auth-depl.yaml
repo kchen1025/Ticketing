@@ -4,18 +4,18 @@ metadata:
   name: auth-depl
 spec:
   replicas: 1
-  selector: # selector and everything below is to look at all auth and look for app "auth"
+  selector:
     matchLabels:
       app: auth
-  template: # create exact pod with label auth
+  template:
     metadata:
       labels:
         app: auth
-    spec: # specifications for specific pod we are creating
+    spec:
       containers:
         - name: auth
-          image: kchen9999/auth:latest # we can use latest or leave it off and docker will pick it up immediately
-          env: # this is where we pull in secrets
+          image: kchen9999/auth
+          env:
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
@@ -29,7 +29,6 @@ metadata:
 spec:
   selector:
     app: auth
-  type: ClusterIP # optional, omitting this line will default to clusterIP service
   ports:
     - name: auth
       protocol: TCP

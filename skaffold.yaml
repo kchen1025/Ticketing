@@ -3,10 +3,10 @@ kind: Config
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/* # watch all files in our k8s folder
+      - ./infra/k8s/*
 build:
   local:
-    push: false # dont push docker build to dockerhub
+    push: false
   artifacts:
     - image: kchen9999/auth
       context: auth
@@ -15,4 +15,12 @@ build:
       sync:
         manual:
           - src: 'src/**/*.ts'
+            dest: .
+    - image: kchen9999/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
             dest: .
