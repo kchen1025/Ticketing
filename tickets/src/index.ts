@@ -3,26 +3,25 @@ import 'express-async-errors';
 import { json } from 'body-parser';
 import mongoose from 'mongoose';
 import cookieSession from 'cookie-session';
-
-import { currentUserRouter } from './routes/current-user';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
-import { signupRouter } from './routes/signup';
-import { errorHandler, NotFoundError } from '@ticketing-system/common';
+import {
+  errorHandler,
+  NotFoundError,
+  currentUser,
+} from '@ticketing-system/common';
+import { createTicketRouter } from '../routes/new';
 
 const app = express();
 app.set('trust proxy', true);
 app.use(json());
 app.use(cookieSession({ signed: false, secure: true }));
 
-app.use(currentUserRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
-app.use(signupRouter);
-
 app.all('*', async (req, res) => {
   throw new NotFoundError();
 });
+
+app.use(currentUser);
+
+app.use(createTicketRouter);
 
 app.use(errorHandler);
 
@@ -31,7 +30,7 @@ const start = async () => {
     throw new Error('JWT_KEY must be defined');
   }
   if (!process.env.MONGO_URI) {
-    throw new Error('MONGO_URI must be defined');
+    throw new Error('MONGO_URI must be definedd');
   }
 
   try {
@@ -46,7 +45,7 @@ const start = async () => {
   }
 
   app.listen(3000, () => {
-    console.log('Listening on port 3000!!!!yeet!!!');
+    console.log('Listening on port 3000???');
   });
 };
 
