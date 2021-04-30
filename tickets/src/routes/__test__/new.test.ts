@@ -2,6 +2,13 @@ import { app } from '../../app';
 import request from 'supertest';
 import { Ticket } from '../../models/ticket';
 
+// tell jest that anything actually trying to import this file, instead redirect it to use our
+// mocked nats-wrapper sitting inside our __mocks__ folder
+//jest.mock('../../nats-wrapper');
+
+// jest will still use the nats-wrapper in our __mocks__ directory even though we are importing the actual file here
+import { natsWrapper } from '../../nats-wrapper';
+
 it('has a route handler listening to /api/tickets for post requests', async () => {
   const response = await request(app).post('/api/tickets').send({});
   expect(response.status).not.toEqual(404);
@@ -77,4 +84,20 @@ it('creates a ticket with valid inputs', async () => {
   expect(tickets.length).toEqual(1);
   expect(tickets[0].price).toEqual(20);
   expect(tickets[0].title).toEqual(title);
+});
+
+it('publishes an event', async () => {
+  const title = 'asldkfj';
+
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.signin())
+    .send({
+      title,
+      price: 20,
+    })
+    .expect(201);
+
+  // check if the mocked nats-wrapper is being invoked
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

@@ -12,6 +12,8 @@ declare global {
   }
 }
 
+jest.mock('../nats-wrapper');
+
 let mongo: any;
 beforeAll(async () => {
   process.env.JWT_KEY = 'asdf';
@@ -26,6 +28,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  jest.clearAllMocks();
   const collections = await mongoose.connection.db.collections();
 
   for (let collection of collections) {
@@ -39,9 +42,11 @@ afterAll(async () => {
 });
 
 global.signin = () => {
+  const id = mongoose.Types.ObjectId().toHexString();
+
   // build a jwt payload { id,email }
   const payload = {
-    id: '1234123423asdf',
+    id,
     email: 'test@test.com',
   };
 
