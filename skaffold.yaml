@@ -3,15 +3,53 @@ kind: Config
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/* # watch all files in our k8s folder
+      - ./infra/k8s/*
 build:
-  # local:
-  #   push: false # dont push docker build to dockerhub
-  googleCloudBuild: 
-    projectId: ticketing-dev-311001
+  local:
+    push: false
   artifacts:
-    - image: us.gcr.io/ticketing-dev-311001/auth
+    - image: kchen9999/auth
       context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: kchen9999/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
+    - image: kchen9999/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: kchen9999/orders
+      context: orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: kchen9999/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: kchen9999/payments
+      context: payments
       docker:
         dockerfile: Dockerfile
       sync:

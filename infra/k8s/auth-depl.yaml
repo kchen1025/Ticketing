@@ -4,17 +4,25 @@ metadata:
   name: auth-depl
 spec:
   replicas: 1
-  selector: # selector and everything below is to look at all auth and look for app "auth"
+  selector:
     matchLabels:
       app: auth
-  template: # create exact pod with label auth
+  template:
     metadata:
       labels:
         app: auth
-    spec: # specifications for specific pod we are creating
+    spec:
       containers:
         - name: auth
-          image: us.gcr.io/ticketing-dev-311001/auth # we can use latest or leave it off and docker will pick it up immediately
+          image: kchen9999/auth
+          env:
+            - name: MONGO_URI
+              value: 'mongodb://auth-mongo-srv:27017/auth'
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
@@ -23,7 +31,6 @@ metadata:
 spec:
   selector:
     app: auth
-  type: ClusterIP # optional, omitting this line will default to clusterIP service
   ports:
     - name: auth
       protocol: TCP
